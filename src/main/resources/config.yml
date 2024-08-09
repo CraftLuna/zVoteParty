@@ -79,8 +79,14 @@ party:
     
   # This command will be executed in the console, you cannot specify a player here
   commands:
-    - "eco give * 0.0000000009"  
-    
+    - "eco give * 0.0000000009"
+
+  random-commands:
+    1:
+      chance: 20
+      commands:
+        - "say asd"
+
   # Rewards that the player can get randomly 
   rewards:
     1:
@@ -98,4 +104,4 @@ sql:
   password: "secret"
   port: 3306
   host: "192.168.10.10"
-  database: "zvoteparty"         
+  database: "zvoteparty"

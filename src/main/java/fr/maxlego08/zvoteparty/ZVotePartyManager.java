@@ -1,10 +1,8 @@
 package fr.maxlego08.zvoteparty;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.security.SecureRandom;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.Bukkit;
@@ -33,12 +31,15 @@ import fr.maxlego08.zvoteparty.zcore.utils.yaml.YamlUtils;
 
 public class ZVotePartyManager extends YamlUtils implements VotePartyManager {
 
+	private static final Random RANDOM = new SecureRandom();
+
 	private final ZVotePartyPlugin plugin;
 	private final List<Reward> rewards = new ArrayList<>();
 
 	private final List<Reward> partyRewards = new ArrayList<>();
 	private List<String> globalCommands = new ArrayList<>();
 	private List<String> commands = new ArrayList<>();
+	private List<RandomCommand> randomCommands = new LinkedList<>();
 	private long needVote = 50;
 
 	/**
@@ -272,6 +273,17 @@ public class ZVotePartyManager extends YamlUtils implements VotePartyManager {
 		this.globalCommands = configuration.getStringList("party.global_commands");
 		this.commands = configuration.getStringList("party.commands");
 
+		this.randomCommands = new ArrayList<>();
+
+		ConfigurationSection section = configuration.getConfigurationSection("party.random-commands");
+		if (section != null) {
+			for (String key : section.getKeys(false)){
+				int chance = configuration.getInt("party.random-commands." + key + ".chance");
+				List<String> commands = configuration.getStringList("party.random-commands." + key + ".commands");
+				this.randomCommands.add(new RandomCommand(chance, commands));
+			}
+		}
+
 		this.partyRewards.clear();
 		if (configuration.isConfigurationSection("party.rewards.")) {
 			try {
@@ -357,6 +369,14 @@ public class ZVotePartyManager extends YamlUtils implements VotePartyManager {
 
 		Bukkit.getScheduler().runTask(this.plugin, () -> {
 			this.commands.forEach(command -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
+
+			for (RandomCommand command : randomCommands) {
+				int random = RANDOM.nextInt(101);
+				if (random <= command.getChance()) {
+					command.getCommands().forEach(s -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s));
+					break;
+				}
+			}
 		});
 
 		broadcast(Message.VOTE_PARTY_START);
