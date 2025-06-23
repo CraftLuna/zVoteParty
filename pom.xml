@@ -122,15 +122,16 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>fr.maxlego08.menu</groupId>
+            <artifactId>zMenu</artifactId>
+            <version>1.1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/zMenu-1.1.0.0-DEV-23441a1.jar</systemPath>
+        </dependency>
+        <dependency>
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
             <version>4.0.43</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.Maxlego08</groupId>
-            <artifactId>zMenu-API</artifactId>
-            <version>09a24e6b5d</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
